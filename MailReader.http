@@ -1,6 +1,0 @@
-@MailReader_HostAddress = http://localhost:5156
-
-GET {{MailReader_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
