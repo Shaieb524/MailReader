@@ -5,6 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// services DI
 builder.Services.AddSingleton<ITokenStorageService, FileTokenStorageService>();
 
 // Add Cookie Authentication
