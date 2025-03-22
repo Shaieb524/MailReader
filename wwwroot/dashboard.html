@@ -1,0 +1,275 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Reader Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 1000px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .app-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border: none;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 16px 20px;
+            font-weight: 600;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+            .table th {
+                font-weight: 600;
+                color: #495057;
+                border-top: none;
+            }
+
+        .badge {
+            padding: 8px 12px;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .badge-ongoing {
+            background-color: #4CAF50;
+        }
+
+        .badge-temporary {
+            background-color: #2196F3;
+        }
+
+        .badge-expired {
+            background-color: #F44336;
+        }
+
+        .btn-add {
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .btn-view, .btn-revoke {
+            font-size: 14px;
+            padding: 6px 12px;
+        }
+
+        .btn-view {
+            margin-right: 8px;
+        }
+
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .empty-icon {
+            margin-bottom: 20px;
+            width: 80px;
+            height: 80px;
+            background-color: #e9ecef;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+        }
+
+        .empty-text {
+            font-size: 18px;
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            width: 3rem;
+            height: 3rem;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="app-title">Email Reader Dashboard</h1>
+            <a href="/auth.html" class="btn btn-primary btn-add">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16" style="margin-right: 5px;">
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                </svg>
+                Add Gmail Account
+            </a>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                Authorized Gmail Accounts
+            </div>
+            <div id="loading" class="loading">
+                <div class="spinner-border text-primary loading-spinner" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Loading account data...</p>
+            </div>
+
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#6c757d" class="bi bi-envelope" viewBox="0 0 16 16">
+                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.708 2.825L15 11.105V5.383zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z" />
+                    </svg>
+                </div>
+                <p class="empty-text">No Gmail accounts have been authorized yet.</p>
+                <a href="/auth.html" class="btn btn-primary">Add Gmail Account</a>
+            </div>
+
+            <div id="users-table-container" style="display: none;">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">Email</th>
+                            <th style="width: 20%;">Access Type</th>
+                            <th style="width: 20%;">Status</th>
+                            <th style="width: 20%;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body">
+                        <!-- User data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadUserData);
+
+        async function loadUserData() {
+            try {
+                const response = await fetch('/api/gmail/user');
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user data');
+                }
+
+                const users = await response.json();
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (users.length === 0) {
+                    document.getElementById('empty-state').style.display = 'block';
+                    return;
+                }
+
+                const tableBody = document.getElementById('users-table-body');
+                tableBody.innerHTML = '';
+
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+
+                    // Badge for access type
+                    let badge;
+                    let status;
+
+                    if (user.isExpired) {
+                        badge = `<span class="badge bg-danger badge-expired">Expired</span>`;
+                        status = 'Expired';
+                    } else if (user.ongoingAccess) {
+                        badge = `<span class="badge bg-success badge-ongoing">Ongoing</span>`;
+                        status = 'Active';
+                    } else {
+                        badge = `<span class="badge bg-primary badge-temporary">Temporary</span>`;
+                        status = `Expires on ${user.expiresOn}`;
+                    }
+
+                    row.innerHTML = `
+                        <td>${user.email}</td>
+                        <td>${badge}</td>
+                        <td>${status}</td>
+                        <td>
+                            <a href="/view-emails.html?userId=${user.userId}" class="btn btn-sm btn-primary btn-view">View Emails</a>
+                            <button class="btn btn-sm btn-danger btn-revoke" onclick="revokeAccess('${user.userId}', '${user.email}')">Revoke</button>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+
+                document.getElementById('users-table-container').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('empty-state').style.display = 'block';
+                document.getElementById('empty-state').innerHTML = `
+                    <div class="empty-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#dc3545" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
+                            <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
+                            <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
+                        </svg>
+                    </div>
+                    <p class="empty-text">Error loading account data. Please try again later.</p>
+                    <button class="btn btn-primary" onclick="loadUserData()">Retry</button>
+                `;
+            }
+        }
+
+        async function revokeAccess(userId, email) {
+            if (!confirm(`Are you sure you want to revoke access for ${email}? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/gmail/revoke?userId=${userId}`, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to revoke access');
+                }
+
+                alert('Access successfully revoked.');
+                loadUserData(); // Reload the user data
+
+            } catch (error) {
+                console.error('Error revoking access:', error);
+                alert('An error occurred while revoking access. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>

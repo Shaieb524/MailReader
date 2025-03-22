@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmail Access Authorization</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            padding: 40px 0;
+        }
+
+        .container {
+            max-width: 600px;
+        }
+
+        .auth-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .app-logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .logo-circle {
+            width: 80px;
+            height: 80px;
+            background-color: #4285F4;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+        }
+
+        .app-title {
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .app-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .access-option {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+            .access-option:hover {
+                border-color: #4285F4;
+                background-color: #f8f9fc;
+            }
+
+            .access-option.selected {
+                border-color: #4285F4;
+                background-color: #f0f7ff;
+            }
+
+        .access-option-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .access-radio {
+            margin-right: 15px;
+        }
+
+        .access-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #333;
+            margin: 0;
+        }
+
+        .access-description {
+            color: #555;
+            margin-left: 30px;
+        }
+
+        .auth-btn {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+
+            .auth-btn:hover {
+                background-color: #3367D6;
+            }
+
+        .info-note {
+            background-color: #e8f4fd;
+            border-left: 4px solid #4285F4;
+            padding: 15px;
+            margin-top: 25px;
+            color: #333;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-card">
+            <div class="app-logo">
+                <div class="logo-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="white" viewBox="0 0 16 16">
+                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.708 2.825L15 11.105V5.383zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741zM1 11.105l4.708-2.897L1 5.383v5.722z" />
+                    </svg>
+                </div>
+            </div>
+
+            <h1 class="app-title">Email Reader App</h1>
+            <p class="app-subtitle">Authorize access to your Gmail account</p>
+
+            <div class="access-option selected" id="option1" onclick="selectOption(1)">
+                <div class="access-option-header">
+                    <input type="radio" name="accessType" id="radio1" class="access-radio" checked onchange="selectOption(1)">
+                    <h3 class="access-title">Temporary Access (6 months)</h3>
+                </div>
+                <p class="access-description">
+                    If you allow access to your Gmail data, Google will ask you to review this access every 6 months.
+                    This access will expire on September 15, 2025.
+                </p>
+            </div>
+
+            <div class="access-option" id="option2" onclick="selectOption(2)">
+                <div class="access-option-header">
+                    <input type="radio" name="accessType" id="radio2" class="access-radio" onchange="selectOption(2)">
+                    <h3 class="access-title">Ongoing Access</h3>
+                </div>
+                <p class="access-description">
+                    You can choose to allow ongoing access to your Google Account data.
+                    This means you won't need to review access every 6 months.
+                </p>
+            </div>
+
+            <button id="authorizeBtn" class="auth-btn">Continue with Google</button>
+
+            <div class="info-note">
+                <strong>Note:</strong> This app will only read your email messages and settings. It won't send emails or make changes to your account.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ongoingAccess = false;
+
+        function selectOption(option) {
+            document.getElementById('option1').classList.remove('selected');
+            document.getElementById('option2').classList.remove('selected');
+            document.getElementById('radio1').checked = false;
+            document.getElementById('radio2').checked = false;
+
+            document.getElementById(`option${option}`).classList.add('selected');
+            document.getElementById(`radio${option}`).checked = true;
+
+            ongoingAccess = (option === 2);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('authorizeBtn').addEventListener('click', function() {
+                window.location.href = `/api/gmail/authorize?ongoingAccess=${ongoingAccess}`;
+            });
+        });
+    </script>
+</body>
+</html>
