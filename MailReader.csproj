@@ -14,4 +14,9 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="storage\mappings\" />
+    <Folder Include="storage\tokens\" />
+  </ItemGroup>
+
 </Project>
