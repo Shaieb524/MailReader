@@ -1,0 +1,175 @@
+{
+  "info": {
+    "name": "Gmail API Integration",
+    "_postman_id": "80fa6cef-8d36-4c6f-acb5-9ced154f9e85",
+    "description": "Collection for testing Gmail API integration with OAuth 2.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Authorization",
+      "item": [
+        {
+          "name": "Initiate OAuth Flow",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/Gmail/authorize?ongoingAccess={{ongoingAccess}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "Gmail",
+                "authorize"
+              ],
+              "query": [
+                {
+                  "key": "ongoingAccess",
+                  "value": "{{ongoingAccess}}",
+                  "description": "Set to true for permanent access, false for 6-month access"
+                }
+              ]
+            },
+            "description": "Initiates the OAuth flow with Google. This will redirect to Google's authentication page. Note: You'll need to manually extract and save the userId from the redirect URL after successful authentication."
+          },
+          "response": []
+        },
+        {
+          "name": "OAuth Callback (Documentation Only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/Gmail/HandleCallback?code={{auth_code}}&state={{state}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "Gmail",
+                "HandleCallback"
+              ],
+              "query": [
+                {
+                  "key": "code",
+                  "value": "{{auth_code}}",
+                  "description": "Authorization code from Google"
+                },
+                {
+                  "key": "state",
+                  "value": "{{state}}",
+                  "description": "State parameter returned by Google"
+                }
+              ]
+            },
+            "description": "This endpoint is called automatically by Google after the user authenticates. It's included here for documentation purposes only. You won't call this directly from Postman in normal usage."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for initiating the OAuth flow and handling the callback from Google."
+    },
+    {
+      "name": "2. Gmail Operations",
+      "item": [
+        {
+          "name": "Get Emails",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/Gmail/emails?userId={{userId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "Gmail",
+                "emails"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{userId}}",
+                  "description": "The user ID received after successful authentication"
+                }
+              ]
+            },
+            "description": "Retrieves a list of recent emails from the user's Gmail account."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/Gmail/user?userId={{userId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "Gmail",
+                "user"
+              ],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "{{userId}}",
+                  "description": "The user ID received after successful authentication"
+                }
+              ]
+            },
+            "description": "Retrieves information about the connected user, including email address and access expiration details."
+          },
+          "response": []
+        }
+      ],
+      "description": "Operations that can be performed after successful authentication with Gmail."
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://your-app-domain.com",
+      "type": "string",
+      "description": "The base URL of your application"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string",
+      "description": "The user ID received after successful authentication"
+    },
+    {
+      "key": "ongoingAccess",
+      "value": "false",
+      "type": "string",
+      "description": "Whether to request ongoing access (true) or temporary access (false)"
+    }
+  ]
+}
