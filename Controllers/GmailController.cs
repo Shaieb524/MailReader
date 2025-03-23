@@ -7,6 +7,12 @@ using System.Text.Json;
 
 namespace YourApp.Controllers;
 
+/*
+idealy you should have a service that handles the token storage and retrieval
+all logic should be stubbed out from application or controller layer
+this was done for the sake of simplicity
+*/
+
 [ApiController]
 [Route("api/[controller]")]
 public class GmailController : ControllerBase
@@ -422,6 +428,7 @@ public class GmailController : ControllerBase
     }
 }
 
+// TODO add this model
 public class EmailViewModel
 {
     public string Id { get; set; }
