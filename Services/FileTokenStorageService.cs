@@ -3,6 +3,11 @@ using System.Text.Json;
 
 namespace MailReader.Services;
 
+
+/*
+this should be DB
+*/
+
 public class FileTokenStorageService : ITokenStorageService
 {
     private readonly string _tokenStoragePath;
