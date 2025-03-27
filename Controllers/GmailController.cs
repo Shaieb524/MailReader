@@ -5,7 +5,7 @@ using MailReader.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
-namespace YourApp.Controllers;
+namespace MailReader.Controllers;
 
 /*
 idealy you should have a service that handles the token storage and retrieval
